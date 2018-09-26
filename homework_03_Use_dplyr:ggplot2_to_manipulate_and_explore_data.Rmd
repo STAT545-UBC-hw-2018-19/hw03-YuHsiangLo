@@ -1,0 +1,108 @@
+---
+title: 'Homework 03: Use dplyr/ggplot2 to manipulate and explore data'
+author: "Roger Yu-Hsiang Lo"
+date: '2018-10-02'
+output:
+  github_document:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, fig.align = 'center')
+```
+
+## Bring rectangular data in
+
+- Load the `Gapminder` data and `tidyverse` package:
+```{r, warning = FALSE}
+library(gapminder)
+library(tidyverse)
+```
+
+- Some sanity check to make sure the `Gapminder` data was loaded properly:
+```{r}
+head(gapminder) %>%
+  knitr::kable(.)
+```
+
+
+## Task 1: Maximum and minimum of GDP per capita within the continents
+
+Suppose that we are interested in the maximum and minumum of GDP per capita in the year of 2007. The restuls are summarized in the following table:
+
+```{r}
+gapminder %>%
+  filter(year == 2007) %>%
+  group_by(continent, year) %>%
+  summarise(max = max(gdpPercap), min = min(gdpPercap)) %>%
+  knitr::kable(.)
+```
+
+In the following plot, we try to represent this information in a plot. Of course, now that we are using a plot, we can include the maxmimum and minimum from all the years:
+
+```{r fig.width = 10, fig.height = 4}
+max <- gapminder %>%
+  group_by(continent, year) %>%
+  summarise(extreme = 'Maximum', gdpPercap = max(gdpPercap))  # Extract max data
+
+min <- gapminder %>%
+  group_by(continent, year) %>%
+  summarise(extreme = 'Minimum', gdpPercap = min(gdpPercap))  # Extract min data
+
+range <- rbind(max, min)  # Combine the two data frames
+
+ggplot(range, aes(x = year, y = gdpPercap, color = extreme)) +
+  facet_grid(~ continent) +
+  geom_line() +
+  scale_y_log10() +  # Change the scale
+  labs(x = 'Year', y = 'GDP per capita') +  # Add labels
+  theme(legend.title = element_blank())  # Remove legend title
+```
+
+We can see that the range of GDP within Oceania is very small over the years(but again only the data from Australia and New Zealand are included in this continent), and the range is biggest in Asia overall. We can also observe that the gap between the highest and lowest GDP was increasing in Americas.
+
+Simiarly, we can investigate how the range associated with life expectancy changes over the years across different continents:
+
+```{r fig.width = 10, fig.height = 4}
+max <- gapminder %>%
+  group_by(continent, year) %>%
+  summarise(extreme = 'Maximum', lifeExp = max(lifeExp))
+
+min <- gapminder %>%
+  group_by(continent, year) %>%
+  summarise(extreme = 'Minimum', lifeExp = min(lifeExp))
+
+range <- rbind(max, min)
+
+ggplot(range, aes(x = year, y = lifeExp, color = extreme)) +
+  facet_grid(~ continent) +
+  geom_line() +
+  labs(x = 'Year', y = 'Life expectancy') +
+  theme(legend.title = element_blank())
+```
+
+We see that both maximum and minimum of life expectancy shifted upward over the years within each continent. Furthermore, for Americas and Europe, the gap between the extremes was closing through time. Also notice that the maximum life expectancy is approximately the same in 2007 across continents.
+
+## Task 2:
+
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
