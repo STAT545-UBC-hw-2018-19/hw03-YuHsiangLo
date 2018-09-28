@@ -162,7 +162,7 @@ As can be seen from the plot, the majority of African countries and some Asian c
 Task 3: Who lingered longest in Asia?
 -------------------------------------
 
-The table (be warned: the table is a bit looooong) below shows the top five countries in Asia that have the longest life expectancy:
+The table below shows the top five countries in Asia that had the longest life expectancy for each year:
 
 ``` r
 gapminder %>%
@@ -170,74 +170,28 @@ gapminder %>%
   select(country, year, lifeExp) %>%  # Remove irrelevant columns
   group_by(year) %>%
   top_n(5, lifeExp) %>%  # Select the top 5 countries with regard to lifeExp
-  arrange(year, -lifeExp) %>%
+  mutate(rank = row_number(-lifeExp)) %>%  # Create rank within each year
+  select(year, rank, country) %>%  # Remove lifeExp column
+  spread(rank, country) %>%  # Put different ranks into columns
   knitr::kable(.)
 ```
 
-| country          |  year|  lifeExp|
-|:-----------------|-----:|--------:|
-| Israel           |  1952|   65.390|
-| Japan            |  1952|   63.030|
-| Hong Kong, China |  1952|   60.960|
-| Singapore        |  1952|   60.396|
-| Taiwan           |  1952|   58.500|
-| Israel           |  1957|   67.840|
-| Japan            |  1957|   65.500|
-| Hong Kong, China |  1957|   64.750|
-| Singapore        |  1957|   63.179|
-| Taiwan           |  1957|   62.400|
-| Israel           |  1962|   69.390|
-| Japan            |  1962|   68.730|
-| Hong Kong, China |  1962|   67.650|
-| Singapore        |  1962|   65.798|
-| Taiwan           |  1962|   65.200|
-| Japan            |  1967|   71.430|
-| Israel           |  1967|   70.750|
-| Hong Kong, China |  1967|   70.000|
-| Singapore        |  1967|   67.946|
-| Taiwan           |  1967|   67.500|
-| Japan            |  1972|   73.420|
-| Hong Kong, China |  1972|   72.000|
-| Israel           |  1972|   71.630|
-| Singapore        |  1972|   69.521|
-| Taiwan           |  1972|   69.390|
-| Japan            |  1977|   75.380|
-| Hong Kong, China |  1977|   73.600|
-| Israel           |  1977|   73.060|
-| Singapore        |  1977|   70.795|
-| Taiwan           |  1977|   70.590|
-| Japan            |  1982|   77.110|
-| Hong Kong, China |  1982|   75.450|
-| Israel           |  1982|   74.450|
-| Taiwan           |  1982|   72.160|
-| Singapore        |  1982|   71.760|
-| Japan            |  1987|   78.670|
-| Hong Kong, China |  1987|   76.200|
-| Israel           |  1987|   75.600|
-| Kuwait           |  1987|   74.174|
-| Singapore        |  1987|   73.560|
-| Japan            |  1992|   79.360|
-| Hong Kong, China |  1992|   77.601|
-| Israel           |  1992|   76.930|
-| Singapore        |  1992|   75.788|
-| Kuwait           |  1992|   75.190|
-| Japan            |  1997|   80.690|
-| Hong Kong, China |  1997|   80.000|
-| Israel           |  1997|   78.269|
-| Singapore        |  1997|   77.158|
-| Kuwait           |  1997|   76.156|
-| Japan            |  2002|   82.000|
-| Hong Kong, China |  2002|   81.495|
-| Israel           |  2002|   79.696|
-| Singapore        |  2002|   78.770|
-| Korea, Rep.      |  2002|   77.045|
-| Japan            |  2007|   82.603|
-| Hong Kong, China |  2007|   82.208|
-| Israel           |  2007|   80.745|
-| Singapore        |  2007|   79.972|
-| Korea, Rep.      |  2007|   78.623|
+|  year| 1      | 2                | 3                | 4         | 5           |
+|-----:|:-------|:-----------------|:-----------------|:----------|:------------|
+|  1952| Israel | Japan            | Hong Kong, China | Singapore | Taiwan      |
+|  1957| Israel | Japan            | Hong Kong, China | Singapore | Taiwan      |
+|  1962| Israel | Japan            | Hong Kong, China | Singapore | Taiwan      |
+|  1967| Japan  | Israel           | Hong Kong, China | Singapore | Taiwan      |
+|  1972| Japan  | Hong Kong, China | Israel           | Singapore | Taiwan      |
+|  1977| Japan  | Hong Kong, China | Israel           | Singapore | Taiwan      |
+|  1982| Japan  | Hong Kong, China | Israel           | Taiwan    | Singapore   |
+|  1987| Japan  | Hong Kong, China | Israel           | Kuwait    | Singapore   |
+|  1992| Japan  | Hong Kong, China | Israel           | Singapore | Kuwait      |
+|  1997| Japan  | Hong Kong, China | Israel           | Singapore | Kuwait      |
+|  2002| Japan  | Hong Kong, China | Israel           | Singapore | Korea, Rep. |
+|  2007| Japan  | Hong Kong, China | Israel           | Singapore | Korea, Rep. |
 
-A table is probably not the most efficient way to display this information, the corresponding plot is shown below:
+A table is probably not the most effective way to display this information, as the actual age is not shown; the corresponding plot is shown below:
 
 ``` r
 # Reference: https://drsimonj.svbtle.com/ordering-categories-within-ggplot2-facets
@@ -265,4 +219,4 @@ ggplot(top, aes(x = order, y = lifeExp, group = year, fill = country)) +
 
 <img src="homework_03_Use_dplyr_ggplot2_to_manipulate_and_explore_data_files/figure-markdown_github/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 
-It is not hard to see that the all-time winners over the years are Japan, Hong Kong, and Israel. But well I don't really want to live that long...
+It is not hard to see that the all-time winners over the years are Japan, Hong Kong, Israel, and Singapore.
